@@ -49,4 +49,12 @@
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="LightfragmentSourceCode.frag">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="LightvertexSourceCode.vert">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>

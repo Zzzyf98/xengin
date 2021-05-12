@@ -167,6 +167,10 @@
     <Text Include="fragmentSourceCode.frag" />
     <Text Include="vertexSourceCode.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="LightfragmentSourceCode.frag" />
+    <None Include="LightvertexSourceCode.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
