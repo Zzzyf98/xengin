@@ -177,8 +177,8 @@ int main() {
 #pragma endregion
 
 
-	myBindTexture("container.jpg", 0, GL_RGB, GL_RGB);
-	myBindTexture("awesomeface.png", 1, GL_RGBA, GL_RGBA);
+	myBindTexture("container2.png", 0, GL_RGBA, GL_RGBA);
+	myBindTexture("container2_specular.png", 1, GL_RGBA, GL_RGBA);
 
 
 
@@ -220,18 +220,49 @@ int main() {
 
 		myShader->use();
 
-		myShader->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		myShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		myShader->setVec3("lightPos", lightPos);
-		myShader->setVec3("viewPos", camera.Position);
-
-		glUniform1i(glGetUniformLocation(myShader->ID, "ourTexture"), 0);
-		glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
-
 		glm::mat4 cubeModel = glm::mat4(1.0f);
 		myShader->setMat4("model", cubeModel);
 		myShader->setMat4("view", view);
 		myShader->setMat4("projection", projection);
+
+		
+		myShader->setVec3("viewPos", camera.Position);
+		
+		
+
+		myShader->setVec3("flashlight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+		myShader->setVec3("flashlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		myShader->setVec3("flashlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		myShader->setVec3("flashlight.postion", camera.Position);
+		myShader->setVec3("flashlight.direction", camera.Front);
+		myShader->setFloat("flashlight.cutOff", glm::cos(glm::radians(12.5f)));
+		myShader->setFloat("flashlight.outerCutOff", glm::cos(glm::radians(17.5f)));
+
+
+		myShader->setVec3("dirlight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+		myShader->setVec3("dirlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		myShader->setVec3("dirlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		myShader->setVec3("dirlight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+
+
+		myShader->setVec3("pointlights.postion", lightPos);
+		myShader->setVec3("pointlights.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+		myShader->setVec3("pointlights.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		myShader->setVec3("pointlights.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		myShader->setFloat("pointlights.constant", 1.0f);
+		myShader->setFloat("pointlights.linear", 0.09f);
+		myShader->setFloat("pointlights.quadratic", 0.032f);
+
+
+
+	
+		
+		myShader->setInt("material.diffuse", 0);//设置texture只要输入通道数int类型即可
+		myShader->setInt("material.specular", 1);
+		myShader->setFloat("material.shininess", 32.0f);
+
+
+		
 	
 		
 		for (unsigned int i = 0; i < 10; i++) {
