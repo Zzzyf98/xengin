@@ -1,13 +1,17 @@
+#pragma once
+
 #define GLEW_STATIC
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "stb_image.h"
-#include <iostream>
+
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"
 #include "Camera.h"
+#include "Model.h"
+
 		 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -19,7 +23,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void myBindTexture(const char* filename, int bindPostion, GLint internalformat, GLenum format);
+unsigned int myBindTexture(const char* filename, int bindPostion, GLint internalformat, GLenum format);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -82,8 +86,8 @@ glm::vec3 cubePositions[] = {
 	  glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
-float screenWidth = 800;
-float screenHeight = 600;
+float screenWidth = 1500;
+float screenHeight = 1500;
 
 float deltaTime = 0.0f;//与上一帧的时间差
 float lastFrame = 0.0f;//记录上一帧的时间
@@ -108,7 +112,7 @@ int main() {
 
 		//------------------------------------------
 		//create window
-		GLFWwindow* window = glfwCreateWindow(800, 600, "openglwindow", NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "openglwindow", NULL, NULL);
 
 		if (window == NULL) {
 			std::cout << "open window fail" << std::endl;
@@ -160,15 +164,6 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);//激活location = 2 号位置
 
-
-	//unsigned int EBO;
-	//glGenBuffers(1, &EBO);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	//unsigned int LightVAO;
-	//glGenVertexArrays(1, &LightVAO);
-	//glBindVertexArray(LightVAO);
 	
 
 
@@ -177,8 +172,8 @@ int main() {
 #pragma endregion
 
 
-	myBindTexture("container2.png", 0, GL_RGBA, GL_RGBA);
-	myBindTexture("container2_specular.png", 1, GL_RGBA, GL_RGBA);
+	unsigned int texture_container2 = myBindTexture("container2.png", 0, GL_RGBA, GL_RGBA);
+	unsigned int texture_container2_specular = myBindTexture("container2_specular.png", 1, GL_RGBA, GL_RGBA);
 
 
 
@@ -201,7 +196,7 @@ int main() {
 #pragma endregion
 
 	
-
+	Model ourModel("C:/Users/11656/source/repos/xengin/xengin/Debug/model/nanosuit.obj");
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -220,6 +215,17 @@ int main() {
 
 		myShader->use();
 
+		ourModel.Draw(*myShader);
+
+		glBindVertexArray(VAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_container2);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture_container2_specular);
+
+
+
+
 		glm::mat4 cubeModel = glm::mat4(1.0f);
 		myShader->setMat4("model", cubeModel);
 		myShader->setMat4("view", view);
@@ -227,6 +233,7 @@ int main() {
 
 		
 		myShader->setVec3("viewPos", camera.Position);
+		
 		
 		
 
@@ -256,12 +263,13 @@ int main() {
 
 
 	
-		
+		//以后贴图都要在material中设置了
+		//先active通道，再bind textureid，最后设置fragment 通道开启数
 		myShader->setInt("material.diffuse", 0);//设置texture只要输入通道数int类型即可
 		myShader->setInt("material.specular", 1);
 		myShader->setFloat("material.shininess", 32.0f);
 
-
+		
 		
 	
 		
@@ -270,9 +278,11 @@ int main() {
 			temp = glm::translate(temp, cubePositions[i]);
 			float angle = 20.0f * i;
 			temp = glm::rotate(temp, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(temp));
+			myShader->setMat4("model", temp);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		
+		myShader->setMat4("model", glm::mat4(1.0f));
 		
 		
 		lightShader->use();
@@ -283,6 +293,10 @@ int main() {
 		lightShader->setMat4("view", view);
 		lightShader->setMat4("projection", projection);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+
+		
 
 
 
@@ -298,7 +312,7 @@ int main() {
 
 
 // bind texture to postion n
-void myBindTexture(const char* filename, int bindPostion, GLint internalformat, GLenum format)
+unsigned int myBindTexture(const char* filename, int bindPostion, GLint internalformat, GLenum format)
 {
 	unsigned int myTexture;
 	int width, height, nrChannels;
@@ -314,6 +328,8 @@ void myBindTexture(const char* filename, int bindPostion, GLint internalformat, 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
+
+	return myTexture;
 }
 
 

@@ -50,8 +50,6 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
 
-//uniform sampler2D ourTexture;
-//uniform sampler2D ourFace;
 
 
 uniform vec3 viewPos;
