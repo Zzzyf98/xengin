@@ -50,7 +50,10 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
 
+uniform float ratio;
 
+
+uniform samplerCube skybox;
 
 uniform vec3 viewPos;
 
@@ -74,7 +77,29 @@ void main()
 
 	result += CalcFlashLight(flashlight,norm,FragPos,viewDir);
 	
-	FragColor = vec4(result,1.0f);
+
+	vec3 I = normalize(FragPos - viewPos);
+	//vec3 R = reflect(I, normalize(Normal));
+	
+	vec3 R = refract(I, normalize(Normal), ratio);
+
+	FragColor = vec4(texture(skybox, R).rgb, 1.0);
+
+	//FragColor = vec4(result,1.0f);
+	//skybox:
+//	if(flag == 1){
+//		FragColor = vec4(result,1.0f);
+//	}
+//	else{
+//		vec3 I = normalize(FragPos - viewPos);
+//		//vec3 R = reflect(I, normalize(Normal));
+//	
+//		vec3 R = refract(I, normalize(Normal), ratio);
+//
+//		FragColor = vec4(texture(skybox, R).rgb, 1.0);
+//	}
+	
+	
 } 
 
 

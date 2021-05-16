@@ -24,6 +24,7 @@ void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 unsigned int myBindTexture(const char* filename, int bindPostion, GLint internalformat, GLenum format);
+unsigned int loadCubemap(std::vector<std::string> faces);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -71,6 +72,50 @@ float vertics[] = {
 	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,1.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,0.0f, 1.0f
+};
+float skyboxVertices[] = {
+	// positions          
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f
 };
 
 glm::vec3 cubePositions[] = {
@@ -145,7 +190,9 @@ int main() {
 
 	Shader* lightShader = new Shader("LightvertexSourceCode.vert", "LightfragmentSourceCode.frag");
 
-#pragma region Bind VAO VBO EBO
+	Shader* skyShader = new Shader("skyvertexSourceCode.vert", "skyfragmentSourceCode.frag");
+
+#pragma region Bind VAO VBO EBO(case)
 
 	unsigned int VAO;
 	unsigned int VBO;
@@ -164,12 +211,41 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);//激活location = 2 号位置
 
+#pragma endregion
+
+
+#pragma region Bind VAO VBO EBO(skybox)
+
+	unsigned int skyVAO;
+	unsigned int skyVBO;
+
+	glGenVertexArrays(1, &skyVAO);
+	glGenBuffers(1, &skyVBO); //1 是 缓冲ID
+
+	glBindVertexArray(skyVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyVBO); //GL_ARRAY_BUFFER是唯一的
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);//激活location = 0 号位置
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); 
 	
 
 
-
-
 #pragma endregion
+
+
+
+	std::vector<std::string> faces
+	{
+		"C:/Users/11656/source/repos/xengin/xengin/Debug/skybox/right.jpg",
+		"C:/Users/11656/source/repos/xengin/xengin/Debug/skybox/left.jpg",
+		"C:/Users/11656/source/repos/xengin/xengin/Debug/skybox/top.jpg",
+		"C:/Users/11656/source/repos/xengin/xengin/Debug/skybox/bottom.jpg",
+		"C:/Users/11656/source/repos/xengin/xengin/Debug/skybox/front.jpg",
+		"C:/Users/11656/source/repos/xengin/xengin/Debug/skybox/back.jpg"
+	};
+
+	unsigned int cubemapTexture = loadCubemap(faces);
 
 
 	unsigned int texture_container2 = myBindTexture("container2.png", 0, GL_RGBA, GL_RGBA);
@@ -195,6 +271,11 @@ int main() {
 
 #pragma endregion
 
+	skyShader->use();
+	skyShader->setInt("skybox", 0);
+	
+	myShader->use();
+	myShader->setInt("skybox", 0);
 	
 	Model ourModel("C:/Users/11656/source/repos/xengin/xengin/Debug/model/nanosuit.obj");
 
@@ -217,26 +298,24 @@ int main() {
 
 		ourModel.Draw(*myShader);
 
-		glBindVertexArray(VAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_container2);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture_container2_specular);
+		//glBindVertexArray(VAO);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, texture_container2);
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, texture_container2_specular);
 
 
+		glm::mat4 temp;
+		temp = glm::translate(temp, glm::vec3(0.0f,-6.0f,-25.0f));
 
-
-		glm::mat4 cubeModel = glm::mat4(1.0f);
-		myShader->setMat4("model", cubeModel);
+		//glm::mat4 cubeModel = glm::mat4(1.0f);
+		myShader->setMat4("model", temp);
 		myShader->setMat4("view", view);
 		myShader->setMat4("projection", projection);
 
 		
 		myShader->setVec3("viewPos", camera.Position);
 		
-		
-		
-
 		myShader->setVec3("flashlight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
 		myShader->setVec3("flashlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
 		myShader->setVec3("flashlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -259,9 +338,6 @@ int main() {
 		myShader->setFloat("pointlights.constant", 1.0f);
 		myShader->setFloat("pointlights.linear", 0.09f);
 		myShader->setFloat("pointlights.quadratic", 0.032f);
-
-
-
 	
 		//以后贴图都要在material中设置了
 		//先active通道，再bind textureid，最后设置fragment 通道开启数
@@ -269,20 +345,26 @@ int main() {
 		myShader->setInt("material.specular", 1);
 		myShader->setFloat("material.shininess", 32.0f);
 
+
+
+		float ratio = sin(currentFrame / 5);
+		myShader->setFloat("ratio", ratio);
 		
-		
+		std::cout << currentFrame << std::endl;
+
+
 	
 		
-		for (unsigned int i = 0; i < 10; i++) {
-			glm::mat4 temp;
-			temp = glm::translate(temp, cubePositions[i]);
-			float angle = 20.0f * i;
-			temp = glm::rotate(temp, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			myShader->setMat4("model", temp);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		//for (unsigned int i = 0; i < 10; i++) {
+		//	glm::mat4 temp;
+		//	temp = glm::translate(temp, cubePositions[i]);
+		//	float angle = 20.0f * i;
+		//	temp = glm::rotate(temp, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//	myShader->setMat4("model", temp);
+		//	glDrawArrays(GL_TRIANGLES, 0, 36);
+		//}
 		
-		myShader->setMat4("model", glm::mat4(1.0f));
+		//myShader->setMat4("model", glm::mat4(1.0f));
 		
 		
 		lightShader->use();
@@ -293,6 +375,20 @@ int main() {
 		lightShader->setMat4("view", view);
 		lightShader->setMat4("projection", projection);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+		glDepthFunc(GL_LEQUAL);
+		skyShader->use();
+		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		skyShader->setMat4("view", view);
+		skyShader->setMat4("projection", projection);
+
+		glBindVertexArray(skyVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS);
 
 
 
@@ -382,4 +478,36 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+}
+
+
+unsigned int loadCubemap(std::vector<std::string> faces)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	int width, height, nrComponents;
+	for (unsigned int i = 0; i < faces.size(); i++)
+	{
+		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+	return textureID;
 }

@@ -177,6 +177,8 @@
     <None Include="LightfragmentSourceCode.frag" />
     <None Include="LightvertexSourceCode.vert" />
     <None Include="packages.config" />
+    <None Include="skyfragmentSourceCode.frag" />
+    <None Include="skyvertexSourceCode.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

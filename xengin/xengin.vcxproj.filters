@@ -75,5 +75,11 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="skyfragmentSourceCode.frag">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="skyvertexSourceCode.vert">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
