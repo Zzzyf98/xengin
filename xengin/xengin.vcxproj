@@ -151,17 +151,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ParticleGenerator.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ParticleGenerator.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="awesomeface.png" />
@@ -174,8 +193,12 @@
     <Text Include="vertexSourceCode.vert" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="imgui\example_glfw_opengl3.vcxproj" />
+    <None Include="imgui\example_glfw_opengl3.vcxproj.filters" />
     <None Include="LightfragmentSourceCode.frag" />
     <None Include="LightvertexSourceCode.vert" />
+    <None Include="lizifragmentSourceCode.frag" />
+    <None Include="lizivertexSourceCode.vert" />
     <None Include="packages.config" />
     <None Include="skyfragmentSourceCode.frag" />
     <None Include="skyvertexSourceCode.vert" />
