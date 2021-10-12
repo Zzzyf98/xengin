@@ -19,6 +19,12 @@
     <Filter Include="源文件\imgui">
       <UniqueIdentifier>{cf97691f-7f28-4f18-b308-7e97b650de45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\picture">
+      <UniqueIdentifier>{a6a1a585-0989-4857-8a10-a865db0ff60c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\shaderfile">
+      <UniqueIdentifier>{14ccdaa8-5d8f-4493-916c-a45cb55063b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,50 +113,101 @@
     <ClInclude Include="imgui\imgui_impl_opengl3.h">
       <Filter>头文件\imgui</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="awesomeface.png">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="container.jpg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="container2.png">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="container2_specular.png">
-      <Filter>资源文件</Filter>
-    </Image>
+    <ClInclude Include="imgui\imfilebrowser.h">
+      <Filter>头文件\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_layout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="allmyheadfile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="fragmentSourceCode.frag">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\shaderfile</Filter>
     </Text>
     <Text Include="vertexSourceCode.vert">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\shaderfile</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LightfragmentSourceCode.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="LightvertexSourceCode.vert">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="packages.config" />
-    <None Include="skyfragmentSourceCode.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="skyvertexSourceCode.vert">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="lizifragmentSourceCode.frag">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="lizivertexSourceCode.vert">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="imgui\example_glfw_opengl3.vcxproj" />
     <None Include="imgui\example_glfw_opengl3.vcxproj.filters" />
+    <None Include="ftijiyun.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="vtijiyun.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="lizifragmentSourceCode.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="lizivertexSourceCode.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="skyfragmentSourceCode.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="skyvertexSourceCode.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="fscreenshader.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="vscreenshader.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="fmoban.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="vmoban.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="flightcube.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="vlightcube.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="fblur.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="ffinalscreen.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="vblur.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="vfinalscreen.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="pbr.frag">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+    <None Include="pbr.vert">
+      <Filter>资源文件\shaderfile</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="picture\container2_specular.png">
+      <Filter>资源文件\picture</Filter>
+    </Image>
+    <Image Include="picture\container2.png">
+      <Filter>资源文件\picture</Filter>
+    </Image>
+    <Image Include="picture\container.jpg">
+      <Filter>资源文件\picture</Filter>
+    </Image>
+    <Image Include="picture\awesomeface.png">
+      <Filter>资源文件\picture</Filter>
+    </Image>
+    <Image Include="picture\noise.png">
+      <Filter>资源文件\picture</Filter>
+    </Image>
   </ItemGroup>
 </Project>

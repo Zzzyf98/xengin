@@ -1,9 +1,9 @@
 #include "Model.h"
 
 
-Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
+
+Model::Model( bool gamma) : gammaCorrection(gamma)
 {
-	loadModel(path);
 }
 
 void Model::Draw(Shader& shader)
@@ -30,6 +30,108 @@ void Model::loadModel(std::string const& path)
 	directory = path.substr(0, path.find_last_of('/'));
 
 	processNode(scene->mRootNode, scene);
+}
+
+void Model::setShader(Shader* myShader,glm::mat4 view,glm::mat4 projection,glm::vec3 cameraPosition, glm::vec3 cameraFront,glm::vec3 mColor,float mIntensity,float ratio,struct PointLight pointlights[],int point_light_cnt)
+{
+	myShader->use();
+
+	glm::mat4 temp;
+	
+	temp = glm::translate(temp, modelPosition);
+	temp = glm::rotate(temp, glm::radians(modelRotation.x), glm::vec3(1.0, 0.0, 0.0));
+	temp = glm::rotate(temp, glm::radians(modelRotation.y), glm::vec3(0.0, 1.0, 0.0));
+	temp = glm::rotate(temp, glm::radians(modelRotation.z), glm::vec3(0.0, 0.0, 1.0));
+	temp = glm::scale(temp, modelScale);
+
+	myShader->setMat4("model", temp);
+	myShader->setMat4("view", view);
+	myShader->setMat4("projection", projection);
+
+	myShader->setVec3("viewPos", cameraPosition);
+
+	myShader->setVec3("light_color", mColor);
+	myShader->setFloat("qiangdu", mIntensity);
+
+
+	myShader->setVec3("flashlight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	myShader->setVec3("flashlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+	myShader->setVec3("flashlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	myShader->setVec3("flashlight.postion", cameraPosition);
+	myShader->setVec3("flashlight.direction", cameraFront);
+	myShader->setFloat("flashlight.cutOff", glm::cos(glm::radians(12.5f)));
+	myShader->setFloat("flashlight.outerCutOff", glm::cos(glm::radians(17.5f)));
+
+
+
+
+	myShader->setVec3("dirlight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	myShader->setVec3("dirlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+	myShader->setVec3("dirlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	myShader->setVec3("dirlight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+
+
+	//for (int i = 0; i < dir_light_cnt; i++) {
+	//	myShader->setVec3("dirlight[i].ambient", DirLight[i].ambient);
+	//	myShader->setVec3("dirlight[i].diffuse", DirLight[i].diffuse);
+	//	myShader->setVec3("dirlight[i].specular", DirLight[i].specular);
+	//	myShader->setVec3("dirlight[i].direction", DirLight[i].direction);
+	//}
+
+	myShader->setInt("n", point_light_cnt);
+
+	for (int i = 0; i < point_light_cnt; i++) {
+		std::string temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].ambient";
+		//std::cout << temp << std::endl;
+		myShader->setVec3(temp, pointlights[i].ambient);
+		temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].diffuse";
+		myShader->setVec3(temp, pointlights[i].diffuse);
+		temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].specular";
+		myShader->setVec3(temp, pointlights[i].specular);
+		temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].postion";
+		myShader->setVec3(temp, pointlights[i].postion);
+		temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].constant";
+		myShader->setFloat(temp, pointlights[i].constant);
+		temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].linear";
+		myShader->setFloat(temp, pointlights[i].linear);
+		temp = "pointlights[";
+		temp += char('0' + i);
+		temp += "].quadratic";
+		myShader->setFloat(temp, pointlights[i].quadratic);
+
+	}
+
+	//myShader->setVec3("pointlights.postion", lightPos);
+	//myShader->setVec3("pointlights.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	//myShader->setVec3("pointlights.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+	//myShader->setVec3("pointlights.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	//myShader->setFloat("pointlights.constant", 1.0f);
+	//myShader->setFloat("pointlights.linear", 0.09f);
+	//myShader->setFloat("pointlights.quadratic", 0.032f);
+
+
+
+
+	//以后贴图都要在material中设置了
+	//先active通道，再bind textureid，最后设置fragment 通道开启数
+	myShader->setInt("material.diffuse", 0);//设置texture只要输入通道数int类型即可
+	myShader->setInt("material.specular", 1);
+	//myShader->setInt("skybox", 0);
+	
+	myShader->setFloat("material.shininess", 32.0f);
+	myShader->setFloat("ratio", ratio);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
