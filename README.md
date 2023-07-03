@@ -1,7 +1,7 @@
 # xengin
 
-基于C++和OpenGL的渲染引擎
+Rendering engine based on C++ and OpenGL
 
 https://www.bilibili.com/video/BV1664y1d7zP?spm_id_from=333.999.0.0
 
-偶尔会更新吧，可能也许大概
+Will continue to update and improve from time to time
